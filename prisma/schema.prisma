@@ -1,0 +1,65 @@
+datasource db {
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model order_items {
+  id                Int      @id @default(autoincrement())
+  order_id          Int
+  product_id        Int
+  quantity          Int
+  price_at_purchase Decimal  @db.Decimal(10, 2)
+  orders            orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_items_ibfk_1")
+  products          products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([product_id], map: "product_id")
+}
+
+model orders {
+  id          Int            @id @default(autoincrement())
+  user_id     Int
+  status      orders_status? @default(pending)
+  created_at  DateTime?      @default(now()) @db.Timestamp(0)
+  order_items order_items[]
+  users       users          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "orders_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model products {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique(map: "name") @db.VarChar(150)
+  description String?       @db.Text
+  price       Decimal       @db.Decimal(10, 2)
+  stock       Int           @default(0)
+  category    String?       @db.VarChar(50)
+  brand       String?       @db.VarChar(100)
+  created_by  Int
+  created_at  DateTime?     @default(now()) @db.Timestamp(0)
+  order_items order_items[]
+  users       users         @relation(fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_ibfk_1")
+
+  @@index([created_by], map: "created_by")
+}
+
+model users {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(100)
+  username   String     @unique(map: "username") @db.VarChar(100)
+  email      String     @unique(map: "email") @db.VarChar(100)
+  password   String     @db.VarChar(100)
+  created_at DateTime?  @default(now()) @db.Timestamp(0)
+  orders     orders[]
+  products   products[]
+}
+
+enum orders_status {
+  pending
+  paid
+  shipped
+  cancelled
+}
