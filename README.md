@@ -1,4 +1,4 @@
-# Practica Node API
+# TechZone-BND
 
 A practice REST API built with **Node.js**, **Express 5**, **TypeScript**, **Prisma** and **MySQL/MariaDB**.
 It includes user registration/login with **JWT + bcrypt**, product management, and order management with stock control inside transactions. API documentation is served through **Swagger UI**.
@@ -79,7 +79,7 @@ package.json
 
    ```bash
    git clone <your-repo-url>
-   cd "Practica-node 3"
+   cd TechZone-BND
    ```
 
 2. Install dependencies:
